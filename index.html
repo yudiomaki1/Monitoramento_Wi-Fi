@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento WiFi</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f4f4f4; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .status { margin-bottom: 20px; font-weight: bold; color: #666; }
+        .value-display { font-size: 24px; margin: 20px 0; color: #007bff; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Monitor de Sinal WiFi (dBm)</h1>
+        <div id="status" class="status">Status: Desconectado</div>
+        <div class="value-display">Sinal Atual: <span id="currentValue">--</span> dBm</div>
+        
+        <canvas id="signalChart"></canvas>
+    </div>
+
+    <script>
+        
+        const mqttHost = "ce8024cdd8084f91b9f0e896819b210b.s1.eu.hivemq.cloud"; 
+        const mqttPort = 8884; 
+        const mqttUser = "hivemq.webclient.1764252624556";
+        const mqttPass = "4&rl3%a?iMRx5SO,yYJ6";
+        const topic = "inteli/projeto/rssi";
+
+        let client;
+        const ctx = document.getElementById('signalChart').getContext('2d');
+
+        //Chart.js
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Tempo (eixo X)
+                datasets: [{
+                    label: 'Potência do Sinal (dBm)',
+                    data: [], // Valores (eixo Y)
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.1 
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        max: -20,  // Sinal excelente
+                        min: -100, // Perda de conexão
+                        title: { display: true, text: 'dBm' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Tempo (s)' }
+                    }
+                },
+                animation: { duration: 0 } // Desativa animação para performance em tempo real
+            }
+        });
+
+        // --- FUNÇÕES MQTT ---
+
+        function startConnect() {
+            // Gera um ID de cliente aleatório
+            const clientId = "WebClient-" + parseInt(Math.random() * 100000);
+            
+            document.getElementById("status").innerText = "Status: Conectando...";
+
+            // Cria instância do cliente Paho
+            client = new Paho.MQTT.Client(mqttHost, mqttPort, clientId);
+
+            // Define callbacks
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+
+            // Conecta
+            client.connect({
+                onSuccess: onConnect,
+                onFailure: onFailure,
+                userName: mqttUser,
+                password: mqttPass,
+                useSSL: true // HiveMQ Cloud exige SSL (WSS)
+            });
+        }
+
+        function onConnect() {
+            document.getElementById("status").innerText = "Status: Conectado ao HiveMQ!";
+            document.getElementById("status").style.color = "green";
+            
+            // Inscreve-se no tópico
+            client.subscribe(topic);
+            console.log("Inscrito no tópico: " + topic);
+        }
+
+        function onFailure(responseObject) {
+            document.getElementById("status").innerText = "Status: Falha na conexão (" + responseObject.errorMessage + ")";
+            document.getElementById("status").style.color = "red";
+            console.log("Falha: " + responseObject.errorMessage);
+        }
+
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                document.getElementById("status").innerText = "Status: Conexão Perdida";
+                document.getElementById("status").style.color = "red";
+                console.log("Conexão perdida: " + responseObject.errorMessage);
+            }
+        }
+
+        function onMessageArrived(message) {
+            const payload = message.payloadString;
+            console.log("Mensagem recebida: " + payload);
+            
+            // Atualiza o texto na tela
+            document.getElementById("currentValue").innerText = payload;
+
+            // Atualiza o gráfico
+            updateChart(payload);
+        }
+
+        // --- ATUALIZAÇÃO DO GRÁFICO ---
+        
+        let timeCounter = 0;
+
+        function updateChart(value) {
+            const now = new Date();
+            const timeLabel = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+
+            // Adiciona dados aos arrays do gráfico
+            chart.data.labels.push(timeLabel);
+            chart.data.datasets[0].data.push(parseInt(value));
+
+            // Mantém apenas os últimos 20 pontos para o gráfico não ficar poluição
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+
+            chart.update();
+        }
+
+        // Inicia a conexão ao carregar a página
+        startConnect();
+
+    </script>
+</body>
+</html>
