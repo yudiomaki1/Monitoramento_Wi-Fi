@@ -9,13 +9,13 @@ Este codigo é responsavel por conectar o ESP32 à internet e enviar os dados do
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 
-const char* ssid = "Inteli.Iot"; 
-const char* password = "%(Yk(sxGMtvFEs.3";
+const char* ssid = "SEU_WIFI"; 
+const char* password = "SUA_SENHA_WIFI";
 
-const char* mqtt_server = "ce8024cdd8084f91b9f0e896819b210b.s1.eu.hivemq.cloud"; 
+const char* mqtt_server = "SEU_URL_HIVEMQ.s1.eu.hivemq.cloud"; 
 const int mqtt_port = 8883; 
-const char* mqtt_user = "hivemq.webclient.1764252624556"; 
-const char* mqtt_password = "4&rl3%a?iMRx5SO,yYJ6";
+const char* mqtt_user = "SEU_USUARIO_HIVEMQ"; 
+const char* mqtt_password = "SUA_SENHA_HIVEMQ";
 
 const char* topic_publish = "inteli/projeto/rssi";
 
