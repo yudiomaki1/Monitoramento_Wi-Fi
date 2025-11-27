@@ -104,7 +104,7 @@ O objetivo central deste experimento é demonstrar, na prática, o princípio da
 5. Ao sair do elevador, o sistema sai do isolamento. O código de reconexão automática entra em ação e o gráfico volta a ser gerado.
 
 ## Dashboard Web
-
+<img src="dashboard_wifi.png">
 
 ## Demonstração em Vídeo
 Link para o vídeo: [Clique Aqui](https://drive.google.com/file/d/1jYefu8E-ioJwsuLP1aixbJ7pVRKq5YnW/view?usp=sharing)
