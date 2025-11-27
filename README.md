@@ -104,6 +104,12 @@ O objetivo central deste experimento é demonstrar, na prática, o princípio da
 5. Ao sair do elevador, o sistema sai do isolamento. O código de reconexão automática entra em ação e o gráfico volta a ser gerado.
 
 ## Dashboard Web
+Este dashboard web foi desenvolvido utilizando **HTML** e **JavaScript** puro e pode ser acessado diretamente através do arquivo `index.html` disponível neste repositório.
+### Como executar
+1.  Baixe o repositório ou localize o arquivo `index.html`.
+2.  Edite o arquivo `index.html` inserindo suas credenciais do **HiveMQ Cloud** (Host, Usuário e Senha).
+3.  Abra o arquivo `index.html` em um navegador .
+4.  Aguarde a mensagem de **"Status: Conectado"** aparecer na tela.
 <img src="dashboard_wifi.png">
 
 ## Demonstração em Vídeo
