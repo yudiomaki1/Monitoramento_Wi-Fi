@@ -1,8 +1,8 @@
 # Monitoramento_Wi-Fi
-Este projeto consiste em um sistema IoT para monitoramento da qualidade do sinal WiFi utilizando um ESP32. Os dados são coletados e enviados via protocolo MQTT para um broker na nuvem (HiveMQ Cloud) e visualizados em uma Dashboard Web com gráficos em tempo real.
+Este projeto consiste em um sistema IoT para monitoramento da qualidade do sinal Wi-Fi (RSSI) utilizando um ESP32. Os dados são coletados e publicados via protocolo MQTT para um broker na nuvem (HiveMQ Cloud) e visualizados em uma Dashboard Web com gráficos em tempo real.
 
-## Arduino IDE
-Este codigo é responsavel por conectar o ESP32 à internet e enviar os dados do sinal Wi-Fi naquele local ao broker MQTT a cada 1 segundo.
+## Código do Firmware
+O código abaixo conecta o ESP32 à internet e publica a intensidade do sinal (dBm) no tópico MQTT a cada 1 segundo.
 
 ``` C++
 #include <WiFi.h>
